@@ -1,5 +1,7 @@
 # C++ Pricing Primitives
 
+[![CI](https://github.com/mengden-quant/cpp-pricing-primitives/actions/workflows/ci.yml/badge.svg)](https://github.com/mengden-quant/cpp-pricing-primitives/actions/workflows/ci.yml)
+
 Modern C++ implementations of derivatives pricing models, numerical methods, and validation tests used in quantitative finance.
 
 ## Purpose
