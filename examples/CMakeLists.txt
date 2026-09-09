@@ -4,5 +4,5 @@ add_executable(binomial_tree_example
 
 target_link_libraries(binomial_tree_example
     PRIVATE
-        binomial_tree
+        pricing_primitives::binomial_tree
 )

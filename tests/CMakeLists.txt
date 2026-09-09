@@ -1,13 +1,15 @@
-add_executable(test_binomial_tree
+add_executable(
+    pricing_primitives_tests
     test_binomial_tree.cpp
 )
 
-target_link_libraries(test_binomial_tree
+target_link_libraries(
+    pricing_primitives_tests
     PRIVATE
-        binomial_tree
+        pricing_primitives::binomial_tree
+        GTest::gtest_main
 )
 
-add_test(
-    NAME test_binomial_tree
-    COMMAND test_binomial_tree
-)
+include(GoogleTest)
+
+gtest_discover_tests(pricing_primitives_tests)
