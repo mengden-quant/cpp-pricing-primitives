@@ -18,8 +18,8 @@ constexpr double model_tolerance = 1e-1;
 
 TEST(BinomialTreeTest, EuropeanCallPriceIsFiniteAndWithinBounds) {
     const double call_price =
-        pricing_primitives::price_option(spot, strike, risk_free_rate, volatility, expiry,
-                                         num_steps, pricing_primitives::OptionType::Call);
+        pricing_primitives::binomial_tree_price(spot, strike, risk_free_rate, volatility, expiry,
+                                                num_steps, pricing_primitives::OptionType::Call);
     EXPECT_TRUE(std::isfinite(call_price));
     EXPECT_GT(call_price, 0.0);
     EXPECT_LT(call_price, spot);
@@ -27,11 +27,11 @@ TEST(BinomialTreeTest, EuropeanCallPriceIsFiniteAndWithinBounds) {
 
 TEST(BinomialTreeTest, EuropeanPutCallParityHolds) {
     const double call_price =
-        pricing_primitives::price_option(spot, strike, risk_free_rate, volatility, expiry,
-                                         num_steps, pricing_primitives::OptionType::Call);
+        pricing_primitives::binomial_tree_price(spot, strike, risk_free_rate, volatility, expiry,
+                                                num_steps, pricing_primitives::OptionType::Call);
     const double put_price =
-        pricing_primitives::price_option(spot, strike, risk_free_rate, volatility, expiry,
-                                         num_steps, pricing_primitives::OptionType::Put);
+        pricing_primitives::binomial_tree_price(spot, strike, risk_free_rate, volatility, expiry,
+                                                num_steps, pricing_primitives::OptionType::Put);
     const double lhs = call_price - put_price;
     const double rhs = spot - strike * std::exp(-risk_free_rate * expiry);
     EXPECT_NEAR(lhs, rhs, parity_tolerance);
@@ -39,9 +39,9 @@ TEST(BinomialTreeTest, EuropeanPutCallParityHolds) {
 
 TEST(BinomialTreeTest, AmericanPutIsNotCheaperThanEuropeanPut) {
     const double european_put =
-        pricing_primitives::price_option(spot, strike, risk_free_rate, volatility, expiry,
-                                         num_steps, pricing_primitives::OptionType::Put);
-    const double american_put = pricing_primitives::price_option(
+        pricing_primitives::binomial_tree_price(spot, strike, risk_free_rate, volatility, expiry,
+                                                num_steps, pricing_primitives::OptionType::Put);
+    const double american_put = pricing_primitives::binomial_tree_price(
         spot, strike, risk_free_rate, volatility, expiry, num_steps,
         pricing_primitives::OptionType::Put, pricing_primitives::ExerciseType::American);
     EXPECT_GE(american_put, european_put);
@@ -49,9 +49,9 @@ TEST(BinomialTreeTest, AmericanPutIsNotCheaperThanEuropeanPut) {
 
 TEST(BinomialTreeTest, AmericanCallMatchesEuropeanCallWithoutDividends) {
     const double european_call =
-        pricing_primitives::price_option(spot, strike, risk_free_rate, volatility, expiry,
-                                         num_steps, pricing_primitives::OptionType::Call);
-    const double american_call = pricing_primitives::price_option(
+        pricing_primitives::binomial_tree_price(spot, strike, risk_free_rate, volatility, expiry,
+                                                num_steps, pricing_primitives::OptionType::Call);
+    const double american_call = pricing_primitives::binomial_tree_price(
         spot, strike, risk_free_rate, volatility, expiry, num_steps,
         pricing_primitives::OptionType::Call, pricing_primitives::ExerciseType::American);
     EXPECT_NEAR(american_call, european_call, parity_tolerance);
@@ -59,9 +59,9 @@ TEST(BinomialTreeTest, AmericanCallMatchesEuropeanCallWithoutDividends) {
 
 TEST(BinomialTreeTest, MomentMatchingProducesReasonableCallPrice) {
     const double crr_call =
-        pricing_primitives::price_option(spot, strike, risk_free_rate, volatility, expiry,
-                                         num_steps, pricing_primitives::OptionType::Call);
-    const double mm_call = pricing_primitives::price_option(
+        pricing_primitives::binomial_tree_price(spot, strike, risk_free_rate, volatility, expiry,
+                                                num_steps, pricing_primitives::OptionType::Call);
+    const double mm_call = pricing_primitives::binomial_tree_price(
         spot, strike, risk_free_rate, volatility, expiry, num_steps,
         pricing_primitives::OptionType::Call, pricing_primitives::ExerciseType::European,
         pricing_primitives::TreeModel::MomentMatching);

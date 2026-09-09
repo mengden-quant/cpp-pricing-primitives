@@ -98,9 +98,9 @@ TreeParameters make_tree_parameters(double risk_free_rate, double volatility, do
 
 }  // namespace
 
-double price_option(double spot, double strike, double risk_free_rate, double volatility,
-                    double expiry, int num_steps, OptionType option_type,
-                    ExerciseType exercise_type, TreeModel tree_model) {
+double binomial_tree_price(double spot, double strike, double risk_free_rate, double volatility,
+                           double expiry, int num_steps, OptionType option_type,
+                           ExerciseType exercise_type, TreeModel tree_model) {
     validate_inputs(spot, strike, volatility, expiry, num_steps);
 
     const double dt = expiry / static_cast<double>(num_steps);

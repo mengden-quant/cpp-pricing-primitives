@@ -11,8 +11,8 @@ int main() {
     const int num_steps = 100;
 
     const double call_price =
-        pricing_primitives::price_option(spot, strike, risk_free_rate, volatility, expiry,
-                                         num_steps, pricing_primitives::OptionType::Call);
+        pricing_primitives::binomial_tree_price(spot, strike, risk_free_rate, volatility, expiry,
+                                                num_steps, pricing_primitives::OptionType::Call);
 
     std::cout << "European call price: " << call_price << std::endl;
 
