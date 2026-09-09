@@ -21,6 +21,7 @@ if(BUILD_TESTING)
 endif()
 
 add_subdirectory(src/binomial_tree)
+add_subdirectory(src/black_scholes)
 
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
