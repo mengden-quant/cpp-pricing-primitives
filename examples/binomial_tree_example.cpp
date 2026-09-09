@@ -1,6 +1,6 @@
-#include "pricing_primitives/binomial_tree/binomial_tree.hpp"
-
 #include <iostream>
+
+#include "pricing_primitives/binomial_tree/binomial_tree.hpp"
 
 int main() {
     const double spot = 100.0;
@@ -10,15 +10,9 @@ int main() {
     const double expiry = 1.0;
     const int num_steps = 100;
 
-    const double call_price = pricing_primitives::price_option(
-        spot,
-        strike,
-        risk_free_rate,
-        volatility,
-        expiry,
-        num_steps,
-        pricing_primitives::OptionType::Call
-    );
+    const double call_price =
+        pricing_primitives::price_option(spot, strike, risk_free_rate, volatility, expiry,
+                                         num_steps, pricing_primitives::OptionType::Call);
 
     std::cout << "European call price: " << call_price << std::endl;
 
