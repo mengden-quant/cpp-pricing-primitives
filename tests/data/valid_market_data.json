@@ -1,0 +1,50 @@
+{
+  "discount_curve": {
+    "quotes": [
+      {
+        "instrument": "OIS",
+        "maturity": 2.0,
+        "rate": 0.0335
+      },
+      {
+        "instrument": "OIS",
+        "maturity": 0.5,
+        "rate": 0.0310
+      },
+      {
+        "instrument": "OIS",
+        "maturity": 1.0,
+        "rate": 0.0320
+      },
+      {
+        "instrument": "OIS",
+        "maturity": 5.0,
+        "rate": 0.0350
+      }
+    ]
+  },
+  "projection_curve": {
+    "quotes": [
+      {
+        "instrument": "IRS",
+        "maturity": 5.0,
+        "rate": 0.0380
+      },
+      {
+        "instrument": "IRS",
+        "maturity": 1.0,
+        "rate": 0.0350
+      },
+      {
+        "instrument": "IRS",
+        "maturity": 2.0,
+        "rate": 0.0365
+      },
+      {
+        "instrument": "IRS",
+        "maturity": 3.0,
+        "rate": 0.0372
+      }
+    ]
+  }
+}

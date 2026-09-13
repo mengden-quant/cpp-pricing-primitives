@@ -8,10 +8,18 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_EXAMPLES "Build examples" ON)
 
+include(FetchContent)
+
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.12.0
+)
+FetchContent_MakeAvailable(nlohmann_json)
+
 include(CTest)
 
 if(BUILD_TESTING)
-    include(FetchContent)
     FetchContent_Declare(
         googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
@@ -22,6 +30,7 @@ endif()
 
 add_subdirectory(src/binomial_tree)
 add_subdirectory(src/black_scholes)
+add_subdirectory(src/market)
 
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
