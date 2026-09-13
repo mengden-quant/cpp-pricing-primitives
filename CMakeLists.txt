@@ -28,6 +28,12 @@ if(BUILD_TESTING)
     FetchContent_MakeAvailable(googletest)
 endif()
 
+option(BUILD_GUI "Build Qt GUI" ON)
+if(BUILD_GUI)
+    find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
+    add_subdirectory(app)
+endif()
+
 add_subdirectory(src/binomial_tree)
 add_subdirectory(src/black_scholes)
 add_subdirectory(src/market)
