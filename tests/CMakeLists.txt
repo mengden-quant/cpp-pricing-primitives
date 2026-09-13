@@ -3,6 +3,9 @@ add_executable(
     test_binomial_tree.cpp
     test_black_scholes.cpp
     test_market_data_loader.cpp
+    test_interpolation.cpp
+    test_yield_curve.cpp
+    test_bootstrap.cpp
 )
 
 target_link_libraries(
@@ -11,6 +14,7 @@ target_link_libraries(
         pricing_primitives::binomial_tree
         pricing_primitives::black_scholes
         pricing_primitives::market
+        pricing_primitives::rates
         GTest::gtest_main
 )
 
