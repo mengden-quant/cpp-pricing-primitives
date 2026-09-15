@@ -6,6 +6,7 @@ add_executable(
     test_interpolation.cpp
     test_yield_curve.cpp
     test_bootstrap.cpp
+    test_schedule.cpp
 )
 
 target_link_libraries(

@@ -1,6 +1,7 @@
 add_library(rates
     interpolation.cpp
     bootstrap.cpp
+    schedule.cpp
 )
 
 add_library(pricing_primitives::rates ALIAS rates)
