@@ -7,6 +7,7 @@ add_executable(
     test_yield_curve.cpp
     test_bootstrap.cpp
     test_schedule.cpp
+    test_fixed_leg.cpp
 )
 
 target_link_libraries(
