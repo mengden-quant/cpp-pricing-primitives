@@ -15,3 +15,9 @@ target_compile_features(rates
     PUBLIC
         cxx_std_20
 )
+
+target_link_libraries(
+    rates
+    PRIVATE
+        project_warnings
+)

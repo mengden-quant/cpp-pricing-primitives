@@ -39,8 +39,8 @@ MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
       load_button_(new QPushButton("Load Market Data")),
       bootstrap_button_(new QPushButton("Bootstrap")),
-      interpolate_button_(new QPushButton("Interpolate")),
       quotes_table_(new QTableWidget()),
+      interpolate_button_(new QPushButton("Interpolate")),
       market_chart_view_(new QChartView()),
       discount_chart_view_(new QChartView()) {
     setWindowTitle("Pricing Primitives");

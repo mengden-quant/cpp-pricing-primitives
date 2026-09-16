@@ -18,8 +18,9 @@ std::vector<double> generate_schedule(double maturity, PaymentFrequency frequenc
     if (std::abs(periods - number_of_payments) > tolerance) {
         throw std::invalid_argument("Maturity is incompatible with payment frequency");
     }
+    const auto number_of_payments_size = static_cast<std::size_t>(number_of_payments);
     std::vector<double> schedule;
-    schedule.reserve(number_of_payments);
+    schedule.reserve(number_of_payments_size);
     for (int i = 1; i <= number_of_payments; ++i) {
         schedule.push_back(static_cast<double>(i) / payments_per_year);
     }

@@ -33,7 +33,8 @@ class YieldCurve {
         const auto right = std::lower_bound(
             nodes_.begin(), nodes_.end(), maturity,
             [](const CurveNode& node, double value) { return node.maturity < value; });
-        if (right->maturity == maturity) {
+        static constexpr double maturity_tolerance = 1e-12;
+        if (std::abs(right->maturity - maturity) < maturity_tolerance) {
             return right->discount_factor;
         }
         const auto left = std::prev(right);

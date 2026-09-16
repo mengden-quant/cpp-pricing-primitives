@@ -50,7 +50,9 @@ CurveMarketData parse_curve_market_data(const nlohmann::json& json) {
         result.quotes.begin(), result.quotes.end(),
         [](const MarketQuote& lhs, const MarketQuote& rhs) { return lhs.maturity < rhs.maturity; });
     for (std::size_t i = 1; i < result.quotes.size(); ++i) {
-        if (result.quotes[i - 1].maturity == result.quotes[i].maturity) {
+        constexpr double maturity_tolerance = 1e-12;
+        if (std::abs(result.quotes[i - 1].maturity - result.quotes[i].maturity) <
+            maturity_tolerance) {
             throw std::invalid_argument("duplicate market quote maturity");
         }
     }

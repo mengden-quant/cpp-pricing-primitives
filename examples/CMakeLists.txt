@@ -5,6 +5,7 @@ add_executable(binomial_tree_example
 target_link_libraries(binomial_tree_example
     PRIVATE
         pricing_primitives::binomial_tree
+        project_warnings
 )
 
 add_executable(black_scholes_example
@@ -15,4 +16,5 @@ add_executable(black_scholes_example
 target_link_libraries(black_scholes_example
     PRIVATE
         pricing_primitives::black_scholes
+        project_warnings
 )

@@ -13,3 +13,9 @@ target_compile_features(binomial_tree
     PUBLIC
         cxx_std_20
 )
+
+target_link_libraries(
+    binomial_tree
+    PRIVATE
+        project_warnings
+)

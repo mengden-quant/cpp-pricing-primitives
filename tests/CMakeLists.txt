@@ -18,6 +18,7 @@ target_link_libraries(
         pricing_primitives::market
         pricing_primitives::rates
         GTest::gtest_main
+        project_warnings
 )
 
 target_compile_definitions(

@@ -103,24 +103,28 @@ double binomial_tree_price(double spot, double strike, double risk_free_rate, do
                            ExerciseType exercise_type, TreeModel tree_model) {
     validate_inputs(spot, strike, volatility, expiry, num_steps);
 
+    const auto vector_size = static_cast<std::size_t>(num_steps) + 1;
     const double dt = expiry / static_cast<double>(num_steps);
 
     const TreeParameters params = make_tree_parameters(risk_free_rate, volatility, dt, tree_model);
 
-    std::vector<double> option_values(num_steps + 1);
+    std::vector<double> option_values(vector_size);
 
     for (int j = 0; j <= num_steps; ++j) {
         const double terminal_spot =
             spot * std::pow(params.up, j) * std::pow(params.down, num_steps - j);
 
-        option_values[j] = payoff(terminal_spot, strike, option_type);
+        const auto index = static_cast<std::size_t>(j);
+        option_values[index] = payoff(terminal_spot, strike, option_type);
     }
 
     for (int step = num_steps; step >= 1; --step) {
         for (int j = 0; j < step; ++j) {
+            const auto index = static_cast<std::size_t>(j);
+
             const double continuation_value =
-                params.discount_factor * (params.probability * option_values[j + 1] +
-                                          (1.0 - params.probability) * option_values[j]);
+                params.discount_factor * (params.probability * option_values[index + 1] +
+                                          (1.0 - params.probability) * option_values[index]);
 
             if (exercise_type == ExerciseType::American) {
                 const double current_spot =
@@ -128,9 +132,9 @@ double binomial_tree_price(double spot, double strike, double risk_free_rate, do
 
                 const double exercise_value = payoff(current_spot, strike, option_type);
 
-                option_values[j] = std::max(continuation_value, exercise_value);
+                option_values[index] = std::max(continuation_value, exercise_value);
             } else {
-                option_values[j] = continuation_value;
+                option_values[index] = continuation_value;
             }
         }
     }

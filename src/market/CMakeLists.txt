@@ -17,4 +17,5 @@ target_compile_features(market
 target_link_libraries(market
     PRIVATE
         nlohmann_json::nlohmann_json
+        project_warnings
 )

@@ -20,7 +20,8 @@ void DiscountCurveBootstrapper::validate(const CurveMarketData& market_data) {
         if (!std::isfinite(quote.rate)) {
             throw std::invalid_argument("quote rate must be finite");
         }
-        if (quote.maturity != expected_maturity) {
+        constexpr double maturity_tolerance = 1e-10;
+        if (std::abs(quote.maturity - expected_maturity) > maturity_tolerance) {
             throw std::invalid_argument(
                 "discount curve bootstrap requires consecutive annual maturities");
         }

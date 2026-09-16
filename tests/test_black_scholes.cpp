@@ -11,10 +11,8 @@ constexpr double risk_free_rate = 0.05;
 constexpr double dividend = 0.02;
 constexpr double volatility = 0.20;
 constexpr double expiry = 1.0;
-constexpr int num_steps = 500;
 
 constexpr double parity_tolerance = 1e-3;
-constexpr double model_tolerance = 1e-1;
 }  // namespace
 
 TEST(BlackScholesTest, EuropeanCallPriceIsFiniteAndWithinBounds) {

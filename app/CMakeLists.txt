@@ -11,4 +11,5 @@ target_link_libraries(
         Qt6::Charts
         pricing_primitives::market
         pricing_primitives::rates
+        project_warnings
 )

@@ -13,3 +13,9 @@ target_compile_features(black_scholes
     PUBLIC
         cxx_std_20
 )
+
+target_link_libraries(
+    black_scholes
+    PRIVATE
+        project_warnings
+)
