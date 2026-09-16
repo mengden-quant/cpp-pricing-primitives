@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 3.20)
 
 project(cpp_pricing_primitives VERSION 0.1.0 LANGUAGES CXX)
 
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(
+        CMAKE_BUILD_TYPE Release
+        CACHE STRING "Build type"
+    )
+endif()
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -31,6 +38,7 @@ endif()
 option(BUILD_GUI "Build Qt GUI" ON)
 if(BUILD_GUI)
     find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
+    qt_standard_project_setup()
     add_subdirectory(app)
 endif()
 
