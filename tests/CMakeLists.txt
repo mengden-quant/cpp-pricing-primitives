@@ -9,6 +9,7 @@ add_executable(
     test_schedule.cpp
     test_fixed_leg.cpp
     test_floating_leg.cpp
+    test_irs_pricer.cpp
 )
 
 target_link_libraries(
