@@ -11,6 +11,7 @@ class DiscountCurveBootstrapper {
     static std::vector<CurveNode> bootstrap(const CurveMarketData& market_data);
 
    private:
-    static void validate(const CurveMarketData& market_data);
+    static void validate(const CurveMarketData& market_data, InstrumentType expected_instrument);
 };
+
 }  // namespace pricing_primitives

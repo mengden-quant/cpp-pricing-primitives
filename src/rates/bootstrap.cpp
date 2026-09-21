@@ -5,14 +5,15 @@
 
 namespace pricing_primitives {
 
-void DiscountCurveBootstrapper::validate(const CurveMarketData& market_data) {
+void DiscountCurveBootstrapper::validate(const CurveMarketData& market_data,
+                                         InstrumentType expected_instrument) {
     if (market_data.quotes.empty()) {
         throw std::invalid_argument("cannot bootstrap curve from empty market data");
     }
     double expected_maturity = 1.0;
     for (const auto& quote : market_data.quotes) {
-        if (quote.instrument != InstrumentType::OIS) {
-            throw std::invalid_argument("discount curve bootstrap supports only OIS quotes");
+        if (quote.instrument != expected_instrument) {
+            throw std::invalid_argument("curve contains unsupported instrument type");
         }
         if (!std::isfinite(quote.maturity) || quote.maturity <= 0.0) {
             throw std::invalid_argument("quote maturity must be positive and finite");
@@ -30,7 +31,7 @@ void DiscountCurveBootstrapper::validate(const CurveMarketData& market_data) {
 }
 
 std::vector<CurveNode> DiscountCurveBootstrapper::bootstrap(const CurveMarketData& market_data) {
-    validate(market_data);
+    validate(market_data, InstrumentType::OIS);
     std::vector<CurveNode> nodes;
     nodes.reserve(market_data.quotes.size());
     for (const auto& quote : market_data.quotes) {
