@@ -197,7 +197,7 @@ void MainWindow::bootstrap_discount_curve() {
     }
     try {
         discount_nodes_ =
-            pricing_primitives::DiscountCurveBootstrapper::bootstrap(market_data_->discount_curve);
+            pricing_primitives::CurveBootstrapper::bootstrap(market_data_->discount_curve);
         plot_discount_curve_nodes();
         interpolate_button_->setEnabled(true);
     } catch (const std::exception& exception) {

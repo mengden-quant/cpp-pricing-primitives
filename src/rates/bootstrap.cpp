@@ -5,8 +5,8 @@
 
 namespace pricing_primitives {
 
-void DiscountCurveBootstrapper::validate(const CurveMarketData& market_data,
-                                         InstrumentType expected_instrument) {
+void CurveBootstrapper::validate(const CurveMarketData& market_data,
+                                 InstrumentType expected_instrument) {
     if (market_data.quotes.empty()) {
         throw std::invalid_argument("cannot bootstrap curve from empty market data");
     }
@@ -30,7 +30,7 @@ void DiscountCurveBootstrapper::validate(const CurveMarketData& market_data,
     }
 }
 
-std::vector<CurveNode> DiscountCurveBootstrapper::bootstrap(const CurveMarketData& market_data) {
+std::vector<CurveNode> CurveBootstrapper::bootstrap(const CurveMarketData& market_data) {
     validate(market_data, InstrumentType::OIS);
     std::vector<CurveNode> nodes;
     nodes.reserve(market_data.quotes.size());
