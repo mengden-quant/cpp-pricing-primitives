@@ -94,3 +94,92 @@ TEST(IrsPricerTest, PayerAndReceiverNpvsHaveOppositeSigns) {
         pricing_primitives::interest_rate_swap_npv(receiver_swap, discount_curve, projection_curve);
     EXPECT_NEAR(payer_npv, -receiver_npv, 1e-10);
 }
+
+TEST(IrsPricerTest, CalculatesParRate) {
+    const std::vector<pricing_primitives::CurveNode> discount_nodes{
+        {1.0, 0.97},
+        {2.0, 0.94},
+    };
+    const std::vector<pricing_primitives::CurveNode> projection_nodes{
+        {1.0, 0.96},
+        {2.0, 0.92},
+    };
+    const pricing_primitives::YieldCurve<pricing_primitives::LogLinearDiscountInterpolator>
+        discount_curve(discount_nodes);
+    const pricing_primitives::YieldCurve<pricing_primitives::LogLinearDiscountInterpolator>
+        projection_curve(projection_nodes);
+    const pricing_primitives::InterestRateSwap swap{
+        1'000'000.0,
+        0.03,
+        2.0,
+        pricing_primitives::PaymentFrequency::Annual,
+        pricing_primitives::PaymentFrequency::Annual,
+        pricing_primitives::SwapSide::Payer,
+    };
+    const double rate = pricing_primitives::par_rate(swap, discount_curve, projection_curve);
+    // Floating leg:
+    // N * [(1 / 0.96 - 1) * 0.97
+    //    + (0.96 / 0.92 - 1) * 0.94]
+    const double floating_pv =
+        1'000'000.0 * ((1.0 / 0.96 - 1.0) * 0.97 + (0.96 / 0.92 - 1.0) * 0.94);
+    // Fixed-leg annuity:
+    // 0.97 + 0.94
+    const double annuity = 0.97 + 0.94;
+    const double expected = floating_pv / (1'000'000.0 * annuity);
+    EXPECT_NEAR(rate, expected, 1e-10);
+}
+
+TEST(IrsPricerTest, ParRateDoesNotDependOnSwapSide) {
+    const std::vector<pricing_primitives::CurveNode> nodes{
+        {1.0, 0.97},
+        {2.0, 0.94},
+    };
+    const pricing_primitives::YieldCurve<pricing_primitives::LogLinearDiscountInterpolator> curve(
+        nodes);
+    const pricing_primitives::InterestRateSwap payer_swap{
+        1'000'000.0,
+        0.03,
+        2.0,
+        pricing_primitives::PaymentFrequency::Annual,
+        pricing_primitives::PaymentFrequency::Annual,
+        pricing_primitives::SwapSide::Payer,
+    };
+    const pricing_primitives::InterestRateSwap receiver_swap{
+        1'000'000.0,
+        0.03,
+        2.0,
+        pricing_primitives::PaymentFrequency::Annual,
+        pricing_primitives::PaymentFrequency::Annual,
+        pricing_primitives::SwapSide::Receiver,
+    };
+    const double payer_rate = pricing_primitives::par_rate(payer_swap, curve, curve);
+    const double receiver_rate = pricing_primitives::par_rate(receiver_swap, curve, curve);
+    EXPECT_NEAR(payer_rate, receiver_rate, 1e-10);
+}
+
+TEST(IrsPricerTest, SwapAtParRateHasZeroNpv) {
+    const std::vector<pricing_primitives::CurveNode> discount_nodes{
+        {1.0, 0.97},
+        {2.0, 0.94},
+    };
+    const std::vector<pricing_primitives::CurveNode> projection_nodes{
+        {1.0, 0.96},
+        {2.0, 0.92},
+    };
+    const pricing_primitives::YieldCurve<pricing_primitives::LogLinearDiscountInterpolator>
+        discount_curve(discount_nodes);
+    const pricing_primitives::YieldCurve<pricing_primitives::LogLinearDiscountInterpolator>
+        projection_curve(projection_nodes);
+    pricing_primitives::InterestRateSwap swap{
+        1'000'000.0,
+        0.03,
+        2.0,
+        pricing_primitives::PaymentFrequency::Annual,
+        pricing_primitives::PaymentFrequency::Annual,
+        pricing_primitives::SwapSide::Payer,
+    };
+    swap.fixed_rate = pricing_primitives::par_rate(swap, discount_curve, projection_curve);
+    const double npv =
+        pricing_primitives::interest_rate_swap_npv(swap, discount_curve, projection_curve);
+    EXPECT_NEAR(npv, 0.0, 1e-10);
+}
