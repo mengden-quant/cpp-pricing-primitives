@@ -8,6 +8,7 @@ add_executable(
     test_bootstrap.cpp
     test_schedule.cpp
     test_fixed_leg.cpp
+    test_floating_leg.cpp
 )
 
 target_link_libraries(
