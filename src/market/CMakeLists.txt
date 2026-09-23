@@ -19,3 +19,5 @@ target_link_libraries(market
         nlohmann_json::nlohmann_json
         project_warnings
 )
+
+enable_clang_tidy(market)

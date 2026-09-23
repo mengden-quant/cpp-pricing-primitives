@@ -1,5 +1,4 @@
-add_executable(
-    pricing_primitives_tests
+add_executable(pricing_primitives_tests
     test_binomial_tree.cpp
     test_black_scholes.cpp
     test_market_data_loader.cpp
@@ -32,3 +31,5 @@ target_compile_definitions(
 include(GoogleTest)
 
 gtest_discover_tests(pricing_primitives_tests)
+
+enable_clang_tidy(pricing_primitives_tests)

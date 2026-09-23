@@ -13,3 +13,5 @@ target_link_libraries(
         pricing_primitives::rates
         project_warnings
 )
+
+enable_clang_tidy(pricing_primitives_gui)

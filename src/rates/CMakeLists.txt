@@ -21,3 +21,5 @@ target_link_libraries(
     PRIVATE
         project_warnings
 )
+
+enable_clang_tidy(rates)

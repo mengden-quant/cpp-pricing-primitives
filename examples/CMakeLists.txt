@@ -18,3 +18,5 @@ target_link_libraries(black_scholes_example
         pricing_primitives::black_scholes
         project_warnings
 )
+
+enable_clang_tidy(binomial_tree_example)

@@ -34,6 +34,22 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     )
 endif()
 
+option(ENABLE_CLANG_TIDY "Enable clang-tidy static analysis" OFF)
+
+if(ENABLE_CLANG_TIDY)
+    find_program(CLANG_TIDY_EXE NAMES clang-tidy REQUIRED)
+endif()
+
+function(enable_clang_tidy target)
+    if(ENABLE_CLANG_TIDY)
+        set_target_properties(
+            ${target}
+            PROPERTIES
+                CXX_CLANG_TIDY "${CLANG_TIDY_EXE}"
+        )
+    endif()
+endfunction()
+
 option(BUILD_EXAMPLES "Build examples" ON)
 
 include(FetchContent)
