@@ -16,6 +16,7 @@ struct CurveNode {
 template <typename Interpolator>
 class YieldCurve {
    public:
+    using interpolator_type = Interpolator;
     explicit YieldCurve(std::vector<CurveNode> nodes) : nodes_(std::move(nodes)) {
         validate();
     }

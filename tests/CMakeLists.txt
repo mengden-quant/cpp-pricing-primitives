@@ -9,6 +9,7 @@ add_executable(pricing_primitives_tests
     test_fixed_leg.cpp
     test_floating_leg.cpp
     test_irs_pricer.cpp
+    test_dv01.cpp
 )
 
 target_link_libraries(
