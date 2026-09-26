@@ -11,6 +11,7 @@ add_executable(pricing_primitives_tests
     test_irs_pricer.cpp
     test_dv01.cpp
     test_scenario.cpp
+    test_scenario_engine.cpp
 )
 
 target_link_libraries(
