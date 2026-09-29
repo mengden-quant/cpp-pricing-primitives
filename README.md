@@ -90,16 +90,21 @@ Validation:
 
 Vanilla fixed-floating interest rate swap pricing and risk analytics.
 
-Currently implemented:
+Implemented:
 - swap domain model;
 - annual, semi-annual, and quarterly payment schedules;
-- fixed leg valuation.
-
-Planned:
-- floating leg valuation;
+- fixed and floating leg valuation.
 - swap NPV and par rate;
-- DV01/PV01;
-- scenario risk analysis.
+- parallel discount and projection curve DV01;
+- bucketed DV01 by market-quote maturity;
+- parallel interest-rate scenario risk analysis.
+
+Validation:
+- payer/receiver NPV symmetry;
+- zero NPV at the calculated par rate;
+- repricing of projection-curve calibration instruments;
+- bucketed versus parallel DV01 consistency;
+- sequential versus parallel scenario consistency.
 
 ---
 
@@ -107,12 +112,18 @@ Planned:
 
 ```text
 cpp-pricing-primitives/
-├── app/                 # Qt GUI
-├── data/                # Market data scenarios
-├── docs/
+├── app/
+|  |── cli/
+|  |── gui/              # Qt GUI
+├── data/                # Market data and scenarios
+├── docs/                # Design documentation
 ├── examples/
 ├── include/
 │   └── pricing_primitives/
+|       |── binomial_tree/
+|       |── black_scholes/
+|       |── rates/
+|       |── risk/
 ├── src/
 │   ├── binomial_tree/
 │   ├── black_scholes/
@@ -158,6 +169,16 @@ To build in Debug mode:
 cmake -S . -B build -DBUILD_GUI=OFF -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
+
+### CLI
+
+The CLI accepts a market-data JSON file and, optionally, a scenario JSON file:
+```bash
+./build/app/irs_pricing/cli/irs_pricing_cli \
+    data/market_data.json \ data/scenarios.json
+```
+
+Swap parameters are entered interactively.
 
 ### GUI
 
