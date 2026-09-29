@@ -78,8 +78,9 @@ option(BUILD_GUI "Build Qt GUI" ON)
 if(BUILD_GUI)
     find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
     qt_standard_project_setup()
-    add_subdirectory(app)
 endif()
+
+add_subdirectory(app)
 
 add_subdirectory(src/binomial_tree)
 add_subdirectory(src/black_scholes)
