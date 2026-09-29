@@ -31,7 +31,7 @@ The first version will include:
 * fixed and floating leg valuation;
 * swap NPV;
 * par swap rate;
-* DV01/PV01;
+* DV01;
 * parallel interest-rate scenarios;
 * automated unit and validation tests;
 * CLI and graphical interfaces.
@@ -67,6 +67,23 @@ $$ F(t_1,t_2) = \frac{1}{\alpha} \left(\frac{P_p(0,t_1)}{P_p(0,t_2)} - 1\right),
 where $P_p$ denotes the projection curve and $\alpha$ is the accrual year fraction.
 
 Therefore, the projection curve determines the projected floating cash flows, while the discount curve determines their present value.
+
+Curve construction is performed sequentially.
+
+First, the discount curve is bootstraped from OIS market quotes. The resulting discount curve is then treated as an input to the projection-curve bootstrap.
+
+The projection curve is bootstrapped from IRS par rates. During this calibration, projected floating cash flows are genereated from the projection curve, while all cash flows are discounted using the already constructed discount curve.
+
+Therefore, the bootstrap dependency is:
+```mermaid
+flowchart LR
+    A[OIS Quotes] --> B[Discount Curve]
+    B --> D[Projection Curve Bootstrap]
+    C[IRS Quotes] --> D
+    D --> E[Projection Curve]
+```
+
+When the discount market quotes are changed, the discount curve must be rebuilt before recalibration the projection curve.
 
 **5. Interest Rate Swap**
 
@@ -106,7 +123,7 @@ A swap priced at the calculated par rate should have NPV approximately equal to 
 
 **6. Risk**
 
-The initial risk measure is DV01/PV01 and will be calculated using curve bumping and repricing.
+The initial risk measure is DV01 and will be calculated using curve bumping and repricing.
 
 For a symmetric one-basis-point parallel curve bump:
 
@@ -120,7 +137,13 @@ The corresponding rate derivative is approximated using the central finite diffe
 
 $$ \frac{\partial PV}{\partial r} \approx \frac{PV(\text{curve}+\Delta r) - PV(\text{curve}-\Delta r)}{2\Delta r} $$
 
-The risk engine should allow the discount and projection curves to be shocked independently, as well as together for combined parallel scenarios.
+DV01 is calculated by bumping market quotes and rebuilding the affected curve, rather than by directly shifting the bootstrapped curve nodes. For discount-curve DV01, OIS market quotes are bumped and the discount curve is rebuilt, while the projection curve is held fixed. For projection-curve DV01, IRS market quotes are bumped and the projection curve is rebuilt using the unchanged discount curve.
+
+Bucketed DV01 applies the same bump-and-reprice procedure to a singe market quote at a selected maturity. This provides a decomposition of the parallel curve sensitivity across market-quote maturities.
+
+As a validation check, the sum of bucketed DV01 values should be approximately consistent with the corresponding parallel DV01. Exact equality is not required because curve construction and repricing are non-linear.
+
+The risk engine should allow the discount and projection curves to be shocked independently, as well as together for combined parallel scenarios. For combined market scenarios, both curves are recalibrated consistently. The shocked discount curve is constructed first, and the shocked projection curve is then bootstrapped using that shocked discount curve.
 
 The engine should additionally support parallel rate scenarios. Scenario calculations are independent and therefore provide a natural use case for parallel execution.
 
