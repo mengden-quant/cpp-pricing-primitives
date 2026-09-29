@@ -1,0 +1,24 @@
+{
+  "scenarios": [
+    {
+      "name": "Rates +25bp",
+      "discount_curve_shift": 0.0025,
+      "projection_curve_shift": 0.0025
+    },
+    {
+      "name": "Rates -25bp",
+      "discount_curve_shift": -0.0025,
+      "projection_curve_shift": -0.0025
+    },
+    {
+      "name": "Discount +25bp",
+      "discount_curve_shift": 0.0025,
+      "projection_curve_shift": 0.0
+    },
+    {
+      "name": "Projection +25bp",
+      "discount_curve_shift": 0.0,
+      "projection_curve_shift": 0.0025
+    }
+  ]
+}

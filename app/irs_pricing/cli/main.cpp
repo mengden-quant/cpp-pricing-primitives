@@ -1,7 +1,11 @@
 #include <algorithm>
 #include <exception>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 #include "pricing_primitives/market/market_data_loader.hpp"
@@ -11,6 +15,7 @@
 #include "pricing_primitives/rates/irs_pricer.hpp"
 #include "pricing_primitives/rates/yield_curve.hpp"
 #include "pricing_primitives/risk/dv01.hpp"
+#include "pricing_primitives/risk/scenario_engine.hpp"
 
 pricing_primitives::PaymentFrequency read_frequency(const char* prompt) {
     int frequency{};
@@ -67,6 +72,31 @@ pricing_primitives::InterestRateSwap read_swap() {
             .fixed_frequency = fixed_frequency,
             .floating_frequency = floating_frequency,
             .side = side};
+}
+
+struct NamedScenario {
+    std::string name;
+    pricing_primitives::RateScenario scenario;
+};
+
+std::vector<NamedScenario> load_scenarios(const std::string& path) {
+    std::fstream file(path);
+    if (!file) {
+        throw std::runtime_error("Failed to open scenario file: " + path);
+    }
+
+    nlohmann::json json;
+    file >> json;
+
+    std::vector<NamedScenario> scenarios;
+    for (const auto& item : json.at("scenarios")) {
+        scenarios.push_back({
+            .name = item.at("name").get<std::string>(),
+            .scenario = {.discount_curve_shift = item.at("discount_curve_shift").get<double>(),
+                         .projection_curve_shift = item.at("projection_curve_shift").get<double>()},
+        });
+    }
+    return scenarios;
 }
 
 int main(int argc, char* argv[]) {
@@ -130,23 +160,50 @@ int main(int argc, char* argv[]) {
         std::cout << "Projection DV01: " << dv01.projection_curve << std::endl;
 
         std::cout << "Bucketed DV01" << std::endl;
-        std::cout << "Maturity\tDiscount\tProjection" << std::endl;
+        std::cout << std::left << std::setw(12) << "Maturity" << std::right << std::setw(18)
+                  << "Discount DV01" << std::setw(18) << "Projection DV01" << std::endl;
         for (const double maturity : maturities) {
             const auto result = bucketed_dv01(swap, market_data, discount_curve, projection_curve,
                                               maturity, bump_size);
-            std::cout << maturity << "\t";
+            std::cout << std::left << std::setw(12) << maturity << std::right;
             if (result.discount_curve.has_value()) {
-                std::cout << result.discount_curve.value();
+                std::cout << std::setw(18) << std::fixed << std::setprecision(2)
+                          << result.discount_curve.value();
             } else {
-                std::cout << "-";
+                std::cout << std::setw(18) << "-";
             }
-            std::cout << "\t";
             if (result.projection_curve.has_value()) {
-                std::cout << result.projection_curve.value();
+                std::cout << std::setw(18) << std::fixed << std::setprecision(2)
+                          << result.projection_curve.value();
             } else {
-                std::cout << "-";
+                std::cout << std::setw(18) << "-";
             }
             std::cout << std::endl;
+        }
+
+        if (argc == 3) {
+            const auto named_scenarios = load_scenarios(argv[2]);
+            std::vector<pricing_primitives::RateScenario> scenarios;
+            scenarios.reserve(named_scenarios.size());
+            for (const auto& named_scenario : named_scenarios) {
+                scenarios.push_back(named_scenario.scenario);
+            }
+            const auto results = pricing_primitives::calculate_scenarios_parallel<
+                pricing_primitives::LogLinearDiscountInterpolator,
+                pricing_primitives::LogLinearDiscountInterpolator>(swap, market_data, scenarios);
+
+            std::cout << "Scenario Analysis" << std::endl;
+            std::cout << "----------------------------------------" << std::endl;
+            std::cout << std::left << std::setw(20) << "Scenario" << std::right << std::setw(10)
+                      << "NPV" << std::setw(10) << "P&L" << std::endl;
+            for (std::size_t i = 0; i < results.size(); ++i) {
+                const double scenario_npv = results[i].scenario_npv;
+                const double pnl = scenario_npv - npv;
+
+                std::cout << std::left << std::setw(20) << named_scenarios[i].name << std::right
+                          << std::setw(10) << std::fixed << std::setprecision(2) << scenario_npv
+                          << std::setw(10) << pnl << std::endl;
+            }
         }
     } catch (const std::exception& exception) {
         std::cerr << "Error: " << exception.what() << std::endl;
